@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
+import './styles/App.css'
+import { useAuth0 } from "@auth0/auth0-react";
+import Loading from "./components/Loading.jsx";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Container} from "reactstrap";
+import { BrowserRouter as Router, Route,Switch} from "react-router-dom";
+import Home from "./views/Home.jsx";
+import initFontAwesome from "./utils/initFontAwesome";
+import ExternalApi from "./views/ExternalApi.jsx";
+initFontAwesome();
 function App() {
-  const [count, setCount] = useState(0)
+
+  const { isLoading, error } = useAuth0();
+
+  if (error) {
+    return <div>Oops... {error.message}</div>;
+  }
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router history={history}>
+      <div id="app" className="d-flex flex-column h-100">
+
+        <Container className="flex-grow-1 mt-5">
+          <Switch>
+            <Route path="/" exact component={Home} />
+            <Route path="/external-api" component={ExternalApi} />
+          </Switch>
+        </Container>
+
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </Router>
+  );
 }
 
 export default App
